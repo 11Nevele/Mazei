@@ -4,6 +4,9 @@
 #include <Adafruit_MotorShield.h>
 #include "Drivetrain.h"
 #include "Camera.h"
+#include "Gyro.h"
+#include "ColorSensor.hpp"
+
 #include <MPU6050_light.h>
 class Robot
 {
@@ -16,7 +19,9 @@ class Robot
   private:
   Drivetrain drive;
   Camera leftCamera, rightCamera;
-  MPU6050 mpu;
+  Gyro gyro;
+  ColorSensor colorSensor;
+
 };
 
 #endif

@@ -20,6 +20,20 @@ void Gyro::Update()
 {
   FetchData();
 }
+double Gyro::GetAngleX()
+{
+  return gyroX;
+}
+
+double Gyro::GetAngleY()
+{
+  return gyroY;
+}
+
+double Gyro::GetAngleZ()
+{
+  return gyroZ;
+}
 
 void Gyro::FetchData()
 {

@@ -1,3 +1,6 @@
+#ifndef GYRO_H
+#define GYRO_H
+
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
@@ -27,3 +30,5 @@ class Gyro
   double angleX, angleY, angleZ;
   unsigned long preTime;
 };
+
+#endif
