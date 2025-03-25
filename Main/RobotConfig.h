@@ -1,0 +1,1 @@
+const int leftCamerac1 = 31, leftCamerac2 = 33, leftCameral1 = 35, leftCameral2 = 37;
