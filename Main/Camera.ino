@@ -1,5 +1,5 @@
 #include "Camera.h"
-Camera::Camera(uint8_t c1, uint8_t c2, uint8_t l1, uint8_t l2)
+Camera::Camera(int c1, int c2, int l1, int l2)
 {
   color1 = c1, color2 = c2, letter1 = l1, letter2 = l2;
   pinMode(color1, INPUT);
