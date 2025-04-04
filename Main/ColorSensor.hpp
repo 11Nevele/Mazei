@@ -1,3 +1,6 @@
+#ifndef COLORSENSOR_HPP
+#define COLORSENSOR_HPP
+
 class ColorSensor
 {
   public:
@@ -71,3 +74,5 @@ class ColorSensor
   }
 
 };
+
+#endif

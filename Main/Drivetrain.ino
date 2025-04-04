@@ -1,8 +1,6 @@
-class Drivetrain
+#include "Drivetrain.h"
+Drivetrain::Drivetrain()
 {
-  public:
-  Drivetrain()
-  {
     AFMS = Adafruit_MotorShield();
     Serial.println("Adafruit Motorshield v2 - DC Motor test!");
 
@@ -16,8 +14,8 @@ class Drivetrain
     FR.Init(AFMS, 2);
     BL.Init(AFMS, 3);
     BR.Init(AFMS, 4);
-  }
-  void Move(double spd)
+}
+  void Drivetrain::Move(double spd)
   {
 
     FL.SetVelocity(spd);
@@ -25,15 +23,3 @@ class Drivetrain
     FR.SetVelocity(spd);
     BR.SetVelocity(spd);
   }
-  void Turn(double spd)
-  {
-
-    FL.SetVelocity(spd);
-    BL.SetVelocity(spd);
-    FR.SetVelocity(-spd);
-    BR.SetVelocity(-spd);
-  }
-  private:
-  Motor FL, FR, BL, BR;
-  Adafruit_MotorShield AFMS;
-};
