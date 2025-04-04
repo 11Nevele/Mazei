@@ -13,8 +13,6 @@ class Robot
   public:
   Robot();
   void Start();
-  void Update();
-
 
   private:
   Drivetrain drive;

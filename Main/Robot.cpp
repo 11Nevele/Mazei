@@ -14,13 +14,9 @@ void Robot::Start()
 {
   while(true)
   {
-    int t = leftCamera.GetLetter();
-    int color = leftCamera.GetColor();
-    if(color == 1) //red
-    {
-      drive.Move(1);
-    }
-    Serial.println(t);
-    delay(100);
+
+    gyro.Update();
+    Serial.println(gyro.GetYaw());
+    delay(10);
   }
 }
