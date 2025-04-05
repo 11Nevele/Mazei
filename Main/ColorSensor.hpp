@@ -21,33 +21,49 @@ class ColorSensor
 
   enum Color
   {
-    red, blue, green, white, unknown
+    red, blue, green, white, black, unknown
   };
   void getColor()
   {
     return curColor;
   }
-  void Update()
+  void Debug()
   {
-    GetColors();                                     //Execute the GetColors function   to get the value of each RGB color
-                                                    //Depending   of the RGB values given by the sensor we can define the color and displays it on   the monitor
     Serial.print("red:");
     Serial.print(Red);
     Serial.print("\tgreen:");
     Serial.print(Green);
     Serial.print("\tBlue:");
     Serial.println(Blue);
-    if (Red <=15 && Green <=15 && Blue <=15)         //If the values   are low it's likely the white color (all the colors are present)
+    Serial.print("[DEBUG]::Cur color = ");
+    if(curColor == red)
+      Serial.println("RED");
+    if(curColor == blue)
+      Serial.println("BLUE");
+    if(curColor == black)
+      Serial.println("BLACK");
+    if(curColor == white)
+      Serial.println("WHITE");
+    if(curColor == unknown)
+      Serial.println("UNKNOWN");
+
+  }
+  void Update()
+  {
+    GetColors();                                     //Execute the GetColors function   to get the value of each RGB color
+                                                    //Depending   of the RGB values given by the sensor we can define the color and displays it on   the monitor
+    
+    if (Red <=30 && Green <=30 && Blue <=30)         //If the values   are low it's likely the white color (all the colors are present)
         curColor = white;                   
         
-    else if (Red<Blue && Red<=Green && Red<23)      // if   Red value is the lowest one and smaller thant 23 it's likely Red
+    else if (Red<Blue && Red<=Green && Red<30)      // if   Red value is the lowest one and smaller thant 23 it's likely Red
       curColor = red;
 
-    else if (Blue<Green && Blue<Red && Blue<20)    //Same thing for Blue
+    else if (Blue<Green && Blue<Red && Blue<50)    //Same thing for Blue
       curColor = blue;
 
-    else if (Green<Red && Green-Blue<= 8)           //Green it was a little tricky,   you can do it using the same method as above (the lowest), but here I used a reflective   object
-      curColor = green;                  //which means the   blue value is very low too, so I decided to check the difference between green and   blue and see if it's acceptable
+    else if (Red >=60 && Green >=60 && Blue >=60)        //Green it was a little tricky,   you can do it using the same method as above (the lowest), but here I used a reflective   object
+      curColor = black;                  //which means the   blue value is very low too, so I decided to check the difference between green and   blue and see if it's acceptable
 
     else
       curColor = unknown;                //if the color is not recognized, you can add as many as you want

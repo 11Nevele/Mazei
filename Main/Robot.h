@@ -17,7 +17,7 @@ class Robot
   private:
   Drivetrain drive;
   Camera leftCamera, rightCamera;
-  // Gyro gyro;
+  Gyro gyro;
   ColorSensor colorSensor;
 
 };

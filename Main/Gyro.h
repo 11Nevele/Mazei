@@ -1,7 +1,8 @@
 #ifndef GYRO_H
 #define GYRO_H
-
-
+#include <Wire.h>
+class Gyro
+{
   public:
   Gyro();
   void Update();
