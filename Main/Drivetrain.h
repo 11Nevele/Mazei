@@ -10,6 +10,7 @@ class Drivetrain
 
   private:
   Motor FL, FR, BL, BR;
+  Adafruit_StepperMotor *servo = AFMS.getStepper(200, 1);
   Adafruit_MotorShield AFMS;
 };
 #endif

@@ -6,8 +6,9 @@
 #include "Camera.h"
 #include "Gyro.h"
 #include "ColorSensor.hpp"
+#include <Servo.h>
+#include "DistanceSensor.hpp"
 
-#include <MPU6050_light.h>
 class Robot
 {
   public:
@@ -19,6 +20,8 @@ class Robot
   Camera leftCamera, rightCamera;
   Gyro gyro;
   ColorSensor colorSensor;
+  Servo servo;
+  DistanceSensor distanceSensor;
 
 };
 
