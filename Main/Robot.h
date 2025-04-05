@@ -6,6 +6,8 @@
 #include "Camera.h"
 #include "Gyro.h"
 #include "ColorSensor.hpp"
+#include "PID.h"
+#include "Tile.hpp"
 
 #include <MPU6050_light.h>
 class Robot
@@ -13,6 +15,9 @@ class Robot
   public:
   Robot();
   void Start();
+  void Turn(double);
+  static bool CheckRotationFinished(double , double , double );
+
 
   private:
   Drivetrain drive;

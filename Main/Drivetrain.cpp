@@ -23,3 +23,11 @@ Drivetrain::Drivetrain()
     FR.SetVelocity(spd);
     BR.SetVelocity(spd);
   }
+
+  void Drivetrain::Turn(double spd)
+  {
+    FL.SetVelocity(spd);
+    BL.SetVelocity(spd);
+    FR.SetVelocity(-spd);
+    BR.SetVelocity(-spd);
+  }
