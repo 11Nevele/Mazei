@@ -2,7 +2,7 @@
 #define DISTANCESENSOR_HPP
 
 #include <Wire.h>
-#include <Adafruit_Sensor.h>
+// #include <Adafruit_Sensor.h>
 #include <SparkFun_I2C_Mux_Arduino_Library.h>  
 #include <Adafruit_VL53L0X.h>
 

@@ -3,7 +3,7 @@
 
 enum Direction
 {
-  front, right,left down 
+  front, right,left, down 
 };
 
 #endif

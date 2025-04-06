@@ -58,6 +58,9 @@ void Robot::Start()
 {
   Tile maze[60][60];
 
+  drive.Move(50);
+  delay(500);
+  Serial.println("1");
   while(true)
   {
 
