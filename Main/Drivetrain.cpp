@@ -1,7 +1,7 @@
 #include "Drivetrain.h"
-Drivetrain::Drivetrain()
+Drivetrain::Drivetrain():AFMS(0x60)
 {
-    AFMS = Adafruit_MotorShield();
+
     Serial.println("Adafruit Motorshield v2 - DC Motor test!");
 
     if (!AFMS.begin()) 

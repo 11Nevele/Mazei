@@ -1,5 +1,6 @@
 #ifndef COLORSENSOR_HPP
 #define COLORSENSOR_HPP
+#include "Color.hpp"
 
 class ColorSensor
 {
@@ -19,10 +20,7 @@ class ColorSensor
     
   }
 
-  enum Color
-  {
-    red, blue, green, white, black, unknown
-  };
+
   void getColor()
   {
     return curColor;

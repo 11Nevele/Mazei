@@ -9,25 +9,26 @@
 #include "PID.h"
 #include "Tile.hpp"
 #include <Servo.h>
-#include "DistanceSensor.hpp"
+#include "Direction.hpp"
+#include "DistanceSensor.h"
 
 class Robot
 {
   public:
   Robot();
   void Start();
-  void Turn(double);
-  static bool CheckRotationFinished(double , double , double );
+  //void Turn(double);
+  //static bool CheckRotationFinished(double , double , double );
 
 
   private:
   Drivetrain drive;
-  Camera leftCamera, rightCamera;
-  Gyro gyro;
-  ColorSensor colorSensor;
-  Servo servo;
+  //Camera leftCamera, rightCamera;
+  //Gyro gyro;
+  //ColorSensor colorSensor;
+  //Servo servo;
   DistanceSensor distanceSensor;
-
+  //Direction facing;
 };
 
 #endif

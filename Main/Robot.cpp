@@ -1,19 +1,22 @@
 #include "Robot.h"
 #include "RobotConfig.h"
 #include "Tile.hpp"
+#include "Stack.h"
+#include "Vector.hpp"
 
-Robot::Robot():leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2), 
-rightCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2),
-drive(),
-gyro(),
-colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),
-servo(),
-distanceSensor()
+Robot::Robot()://leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2), 
+//rightCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2),
+distanceSensor(),
+drive()
+//gyro(),
+//colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),
+//servo(),
+
 {
-  servo.attach(servoPort);
+  //servo.attach(servoPort);
 }
 
-
+/*
 double const ROTATION_ERROR = 0.5, ROTATION_RATE_ERROR = 0.5; 
 
 static bool Robot::CheckRotationFinished(double target, double cur, double rate)
@@ -53,23 +56,25 @@ void Robot::Turn(double target){
   drive.Turn(0);
   delay(100);  
 }
-
+*/
 void Robot::Start()
 {
-  Tile maze[60][60];
+  //Tile maze[60][60];
+  //facing = front;
+  //Vector start_pos = Vector(30, 30);
+  //Stack<Vector> pre_pos;
 
-  drive.Move(50);
+  drive.Move(1);
   delay(500);
-  Serial.println("1");
   while(true)
   {
 
-    gyro.Update();
-    colorSensor.Update();
+    //gyro.Update();
+    //colorSensor.Update();
     distanceSensor.Update();
-    Serial.println(gyro.GetYaw());
+    //Serial.println(gyro.GetYaw());
     distanceSensor.Debug();
-    colorSensor.Debug();
+    //colorSensor.Debug();
 
     delay(100);
   }

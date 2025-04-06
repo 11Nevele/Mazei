@@ -1,35 +1,25 @@
-#ifndef DISTANCESENSOR_HPP
-#define DISTANCESENSOR_HPP
+#include "DistanceSensor.h"
 
-#include <Wire.h>
-// #include <Adafruit_Sensor.h>
-#include <SparkFun_I2C_Mux_Arduino_Library.h>  
-#include <Adafruit_VL53L0X.h>
-
-class DistanceSensor
-{
-  private:
-  const int NUMBER_OF_SENSORS = 3;
-  int distances[3]{};
-  Adafruit_VL53L0X* distanceSensor[3];
-  QWIICMUX myMux;
-  public:
-  DistanceSensor()
+  DistanceSensor::DistanceSensor()
   {
-    if (myMux.begin(0x70, Wire) == false) {
-    Serial.println("MUX INITILIZATION FAILURE. SETUP HALTED");
-    while (1);
+    while (!Serial) {
+      delay(1);
     }
+    Wire.begin();
+    distanceSensor = new Adafruit_VL53L0X*[NUMBER_OF_SENSORS + 1];
+    Serial.println("Test");
+    if (myMux.begin(0x70, Wire) == false) {
+      Serial.println("MUX INITILIZATION FAILURE. SETUP HALTED");
+    }
+
     Serial.println("MUX INITILIZATION SUCCESS");
 
     //Initialize the sensor
     Serial.println("Adafruit VL53L0X test");
-    for (int i = 0; i < NUMBER_OF_SENSORS; i++){
-      //everytime a distance sensor object is referenced it also references the distance sensor object
-      
-    }
-    for (byte i = 0; i < NUMBER_OF_SENSORS; i++) {
+
+    for (byte i = 1; i <= NUMBER_OF_SENSORS; i++) {
       myMux.setPort(i);
+      delay(100);
       distanceSensor[i] = new Adafruit_VL53L0X();
       delay(100);
       if (distanceSensor[i]->begin() != 0)  //Begin returns 0 on a good init
@@ -38,6 +28,8 @@ class DistanceSensor
         Serial.print(i);
         Serial.println("  INITILIZATION FAILURE.");
       } else {
+        
+        distanceSensor[i]->configSensor(Adafruit_VL53L0X::VL53L0X_SENSE_HIGH_ACCURACY);
         //Configure each sensor
         Serial.print("Sensor ");
         Serial.print(i);
@@ -45,10 +37,10 @@ class DistanceSensor
       }
     }
   }
-  void Debug()
+  void DistanceSensor:: Debug()
   {
     Serial.print("[DEBUG]::");
-    for(int i = 0; i < NUMBER_OF_SENSORS; ++i)
+    for(int i = 1; i <= NUMBER_OF_SENSORS; ++i)
     {
       
       Serial.print("Sensor ");
@@ -60,15 +52,15 @@ class DistanceSensor
     Serial.println();
   }
   //return -1 if invalid or distance to far
-  int GetDistance(int i)
+  int DistanceSensor:: GetDistance(int i)
   {
     if(i >= NUMBER_OF_SENSORS)
       return -1;
     return distances[i];
   }
-  void Update()
+  void DistanceSensor:: Update()
   {
-    for (byte i = 0; i < NUMBER_OF_SENSORS; i++) 
+    for (byte i = 1; i <= NUMBER_OF_SENSORS; i++) 
     {
       VL53L0X_RangingMeasurementData_t measure;
       myMux.setPort(i);
@@ -83,6 +75,3 @@ class DistanceSensor
     }
   }
   
-};
-
-#endif
