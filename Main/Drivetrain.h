@@ -8,6 +8,7 @@ class Drivetrain
   Drivetrain();
   void Move(double);
   void Turn(double);
+  void Break();
 
   private:
   Motor FL, FR, BL, BR;

@@ -10,7 +10,7 @@ class PID
     double rateError;
     double kp, ki, kd;
     PID(double, double , double );
-    double GetPID(double);
+    double GetPID(double, bool useKP = false);
     
   
 };

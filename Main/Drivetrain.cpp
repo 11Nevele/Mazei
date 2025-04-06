@@ -1,5 +1,5 @@
 #include "Drivetrain.h"
-Drivetrain::Drivetrain():AFMS(0x60)
+Drivetrain::Drivetrain():AFMS(0x61)
 {
 
     Serial.println("Adafruit Motorshield v2 - DC Motor test!");
@@ -12,10 +12,10 @@ Drivetrain::Drivetrain():AFMS(0x60)
     }
     
     Serial.println("Motor Shield found.");
-    FL.Init(AFMS, 1);
-    FR.Init(AFMS, 2);
+    FR.Init(AFMS, 1);
+    BR.Init(AFMS, 2);
     BL.Init(AFMS, 3);
-    BR.Init(AFMS, 4);
+    FL.Init(AFMS, 4);
 }
   void Drivetrain::Move(double spd)
   {
@@ -32,4 +32,12 @@ Drivetrain::Drivetrain():AFMS(0x60)
     BL.SetVelocity(spd);
     FR.SetVelocity(-spd);
     BR.SetVelocity(-spd);
+  }
+
+  void Drivetrain::Break()
+  {
+    FL.SetVelocity(0);
+    BL.SetVelocity(0);
+    FR.SetVelocity(0);
+    BR.SetVelocity(0);
   }

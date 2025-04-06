@@ -13,6 +13,7 @@ class Gyro
 
   private:
   double yaw, pitch, roll;
+  double offset;
   const int CMPS12=0x60;
 };
 

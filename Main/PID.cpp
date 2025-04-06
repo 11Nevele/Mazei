@@ -13,12 +13,12 @@ PID::PID(double nkp,double nki,double nkd)
     kd = nkd;
 }
 
-double PID:: GetPID(double error)
+double PID:: GetPID(double error, bool useKP)
 {
     currentTime = millis();
     
     rateError = (error - previousError);
-    if(fabs(error) < 10)
+    if(fabs(error) < 10 || useKP)
             cumError += error;
         if ((error>0 && previousError<0)||(error<0 && previousError>0))
             cumError = 0; 

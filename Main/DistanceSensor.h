@@ -9,8 +9,8 @@
 class DistanceSensor
 {
   private:
-  const int NUMBER_OF_SENSORS = 3;
-  int distances[3 + 1]{};
+  const int NUMBER_OF_SENSORS = 4;
+  int distances[4 + 1]{};
   Adafruit_VL53L0X** distanceSensor;
   QWIICMUX myMux;
   public:

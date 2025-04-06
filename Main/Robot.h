@@ -17,18 +17,28 @@ class Robot
   public:
   Robot();
   void Start();
-  //void Turn(double);
-  //static bool CheckRotationFinished(double , double , double );
+  void Turn(double,double);
+  void Move(int, int);
+  bool CheckRotationFinished(double , double , double);
+  double AngleDif(double from, double to)
+  {
+    double t = to - from;
+    if(t > 180)
+      t = t - 360;
+    if(t < -180)
+      t = t + 360;
+    return t;
+  }
 
 
   private:
   Drivetrain drive;
   //Camera leftCamera, rightCamera;
-  //Gyro gyro;
+  Gyro gyro;
   //ColorSensor colorSensor;
   //Servo servo;
   DistanceSensor distanceSensor;
-  //Direction facing;
+  Direction facing;
 };
 
 #endif

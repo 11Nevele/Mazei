@@ -54,7 +54,7 @@
   //return -1 if invalid or distance to far
   int DistanceSensor:: GetDistance(int i)
   {
-    if(i >= NUMBER_OF_SENSORS)
+    if(i > NUMBER_OF_SENSORS)
       return -1;
     return distances[i];
   }
