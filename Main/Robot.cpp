@@ -1,7 +1,6 @@
 #include "Robot.h"
 #include "RobotConfig.h"
 #include "Tile.hpp"
-#include "Stack.h"
 #include "Vector.hpp"
 
 Robot::Robot()://leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2), 
@@ -57,7 +56,7 @@ void Robot::Turn(double target, double maxSpeed = 1.0){
   delay(100);  
 }
 
-const double offset = 0.5;
+const double offset = 20;
 
 void Robot::Move(int dir_front, int dir_back)
 {
@@ -70,14 +69,18 @@ void Robot::Move(int dir_front, int dir_back)
   }
 
   double moved_dist = 0;
-  while (abs(moved_dist - 30) >= offset){
-    drive.Move(0.7);
+  drive.Move(0.2);
+  while (moved_dist <= 300 - offset){
+    
     double new_dist = distanceSensor.GetDistance(used_sensor);
     moved_dist = abs(new_dist - pre_dist);
-    gyro.Update();
-    distanceSensor.Update();
-    distanceSensor.Debug();
+    Serial.print("Previous Distance: ");
+    Serial.print(pre_dist);
+    Serial.print("Current Distance: ");
+    Serial.print(new_dist);
+    Serial.print("Moved Distance: ");
     Serial.println(moved_dist);
+    delay(5);
   }
 
   drive.Break();
@@ -88,24 +91,50 @@ void Robot::Move(int dir_front, int dir_back)
 
 void Robot::Start()
 {
-//   Tile maze[60][60];
-//   facing = front;
-//   Vector start_pos = Vector(30, 30);
-
-  Move(1 + front, 1 + back);
 
 
-  while(true)
-  {
-
-
-    gyro.Update();
-    // colorSensor.Update();
+  facing = front;
+  int r = 30, c= 30;
+  int dir[4][2]{{0, -1},{1, 0}, {0, -1}, {-1, 0}};
+  double rotation[4]{270, 0, 90, 180};
+  
+  /*while(true)
+  {    
+    maze[r][c].visited = true;
+    bool wall[3]{}, visited[3]{};
     distanceSensor.Update();
-    Serial.println(gyro.GetYaw());
-    distanceSensor.Debug();
-    // colorSensor.Debug();
+    for(int i = 0; i < 3; ++i)
+    {
+      if(distanceSensor.GetDistance(i) <= 15)
+        wall[i] = true;
+      int ind = ((int)facing - 1 + i + 4) % 4; 
+      int nr = r + dir[ind][0], nc = c + dir[ind][1];
+      
+    }
+    int candidates[3];
+    int count = 0;
 
-    delay(100);
-  }
+    // Collect unvisited (and optionally unblocked) indices
+    for (int i = 0; i < 3; ++i)
+    {
+        if (!visited[i] && !wall[i]) // You can remove `!wall[i]` if you don't want to avoid walls
+            candidates[count++] = i;
+    }
+
+    int choice;
+    if (count > 0)
+    {
+        choice = candidates[rand() % count];
+    }
+    else
+    {
+        // No unvisited options, pick randomly from all 0 to 2
+        choice = rand() % 3;
+    }
+    choice -= 1;
+    facing = (facing + choice + 4) % 4;
+    Turn(rotation[facing]);
+    Move(front, back);  
+    r += dir[facing][0], c += dir[facing][1];
+  }*/
 }

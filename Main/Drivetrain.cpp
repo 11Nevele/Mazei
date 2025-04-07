@@ -36,6 +36,8 @@ Drivetrain::Drivetrain():AFMS(0x61)
 
   void Drivetrain::Break()
   {
+    Move(-0.2);
+    delay(100);
     FL.SetVelocity(0);
     BL.SetVelocity(0);
     FR.SetVelocity(0);
