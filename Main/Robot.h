@@ -39,7 +39,7 @@ class Robot
   //Servo servo;
   DistanceSensor distanceSensor;
   Direction facing;
-  Tile maze[50][50];
+  Tile maze[30][30]{};
 };
 
 #endif

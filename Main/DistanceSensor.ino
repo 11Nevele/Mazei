@@ -5,9 +5,7 @@
     while (!Serial) {
       delay(1);
     }
-    Wire.begin();
     distanceSensor = new Adafruit_VL53L0X*[NUMBER_OF_SENSORS + 1];
-    Serial.println("Test");
     if (myMux.begin(0x70, Wire) == false) {
       Serial.println("MUX INITILIZATION FAILURE. SETUP HALTED");
     }
@@ -54,6 +52,8 @@
   //return -1 if invalid or distance to far
   int DistanceSensor:: GetDistance(int i)
   {
+
+    ++i;
     Update();
     if(i > NUMBER_OF_SENSORS)
       return -1;

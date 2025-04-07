@@ -58,7 +58,7 @@ void Robot::Turn(double target, double maxSpeed = 1.0){
 
 const double offset = 20;
 
-void Robot::Move(int dir_front, int dir_back)
+void Robot::Move(double distance, double mxSpd)
 {
   int used_sensor = dir_front;
   double pre_dist = distanceSensor.GetDistance(dir_front);
@@ -69,11 +69,13 @@ void Robot::Move(int dir_front, int dir_back)
   }
 
   double moved_dist = 0;
-  drive.Move(0.2);
+
+
   while (moved_dist <= 300 - offset){
     
     double new_dist = distanceSensor.GetDistance(used_sensor);
     moved_dist = abs(new_dist - pre_dist);
+
     Serial.print("Previous Distance: ");
     Serial.print(pre_dist);
     Serial.print("Current Distance: ");
@@ -94,23 +96,26 @@ void Robot::Start()
 
 
   facing = front;
-  int r = 30, c= 30;
+  int r = 15, c= 15;
   int dir[4][2]{{0, -1},{1, 0}, {0, -1}, {-1, 0}};
   double rotation[4]{270, 0, 90, 180};
   
-  /*while(true)
+  while(true)
   {    
     maze[r][c].visited = true;
     bool wall[3]{}, visited[3]{};
     distanceSensor.Update();
     for(int i = 0; i < 3; ++i)
     {
-      if(distanceSensor.GetDistance(i) <= 15)
+      if(distanceSensor.GetDistance(i) <= 200 && distanceSensor.GetDistance(i) != -1)
         wall[i] = true;
       int ind = ((int)facing - 1 + i + 4) % 4; 
       int nr = r + dir[ind][0], nc = c + dir[ind][1];
-      
+      visited[i] = maze[nr][nc].visited;
+      Serial.print(wall[i]);
+      Serial.print(visited[i]);
     }
+    
     int candidates[3];
     int count = 0;
 
@@ -136,5 +141,5 @@ void Robot::Start()
     Turn(rotation[facing]);
     Move(front, back);  
     r += dir[facing][0], c += dir[facing][1];
-  }*/
+  }
 }
