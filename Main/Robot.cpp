@@ -3,7 +3,7 @@
 #include "Tile.hpp"
 #include "Vector.hpp"
 
-Robot::Robot()://leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2), 
+Robot::Robot():leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2), 
 //rightCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2),
 distanceSensor(),
 drive(),
@@ -12,7 +12,15 @@ gyro()
 //servo(),
 
 {
+  pinMode(ledPort, OUTPUT);
   //servo.attach(servoPort);
+  digitalWrite(ledPort, HIGH);
+    delay(500);
+    digitalWrite(ledPort, LOW);
+  while(true)
+  {
+    CheckVictum();
+  }
 }
 
 
@@ -23,6 +31,19 @@ bool Robot::CheckRotationFinished(double target, double cur, double rate)
     bool ucRange = fabs(target - cur) < ROTATION_ERROR;
     bool rateRange = fabs(rate) < ROTATION_RATE_ERROR;
     return ucRange && rateRange ;
+}
+void Robot::CheckVictum()
+{
+  int c = leftCamera.GetColor();
+  int l = leftCamera.GetLetter();
+  Serial.println(c);
+  Serial.println(l);
+  //if((c > 0 || l > 0) && distanceSensor.GetDistance(left) <= 140)
+  //{
+    //digitalWrite(ledPort, HIGH);
+    //delay(500);
+    //digitalWrite(ledPort, LOW);
+  //}
 }
 
 void Robot::Turn(double target, double maxSpeed = 1.0){
@@ -35,7 +56,7 @@ void Robot::Turn(double target, double maxSpeed = 1.0){
   delay(10);
   while(!CheckRotationFinished(target, curRotation, pid.rateError))
   {        
-      
+      CheckVictum();
       curRotation = gyro.GetYaw();
       double curError = AngleDif(curRotation, target);
       
@@ -43,10 +64,10 @@ void Robot::Turn(double target, double maxSpeed = 1.0){
 
       if(out > maxSpeed) out = maxSpeed;
       else if(out < -maxSpeed) out = -maxSpeed;
-      Serial.print("Error: ");
-      Serial.print(curError);
-      Serial.print(" OUT: ");
-      Serial.println(out);
+      //Serial.print("Error: ");
+      //Serial.print(curError);
+      //Serial.print(" OUT: ");
+      //Serial.println(out);
     
       drive.Turn(out);
       delay(10);
@@ -60,22 +81,19 @@ const double offset = 20;
 
 void Robot::Move(double distance, double mxSpd)
 {
-  int used_sensor = dir_front;
-  double pre_dist = distanceSensor.GetDistance(dir_front);
-  if (pre_dist == -1) 
-  {
-    pre_dist = distanceSensor.GetDistance(dir_back);
-    used_sensor = dir_back;
-  }
+  int used_sensor = front;
+  double pre_dist = distanceSensor.GetDistance(front);
+
 
   double moved_dist = 0;
 
-
-  while (moved_dist <= 300 - offset){
+  drive.Move(0.2);
+  while (moved_dist <= 300 - offset)
+  {
     
     double new_dist = distanceSensor.GetDistance(used_sensor);
     moved_dist = abs(new_dist - pre_dist);
-
+    CheckVictum();
     Serial.print("Previous Distance: ");
     Serial.print(pre_dist);
     Serial.print("Current Distance: ");
@@ -139,7 +157,7 @@ void Robot::Start()
     choice -= 1;
     facing = (facing + choice + 4) % 4;
     Turn(rotation[facing]);
-    Move(front, back);  
+    Move(300, 1);  
     r += dir[facing][0], c += dir[facing][1];
   }
 }

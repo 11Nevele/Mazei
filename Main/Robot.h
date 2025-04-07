@@ -18,8 +18,9 @@ class Robot
   Robot();
   void Start();
   void Turn(double,double);
-  void Move(int, int);
+  void Move(double, double);
   bool CheckRotationFinished(double , double , double);
+  void CheckVictum();
   double AngleDif(double from, double to)
   {
     double t = to - from;
@@ -33,7 +34,7 @@ class Robot
 
   private:
   Drivetrain drive;
-  //Camera leftCamera, rightCamera;
+  Camera leftCamera, rightCamera;
   Gyro gyro;
   //ColorSensor colorSensor;
   //Servo servo;
