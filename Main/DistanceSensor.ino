@@ -52,27 +52,40 @@
   //return -1 if invalid or distance to far
   int DistanceSensor:: GetDistance(int i)
   {
-
     ++i;
-    Update();
     if(i > NUMBER_OF_SENSORS)
       return -1;
     return distances[i];
   }
+
   void DistanceSensor:: Update()
   {
-    for (byte i = 1; i <= NUMBER_OF_SENSORS; i++) 
+    int sums[NUMBER_OF_SENSORS + 1]{};
+    for(int i = 0; i < 5; ++i)
     {
-      VL53L0X_RangingMeasurementData_t measure;
-      myMux.setPort(i);
-      distanceSensor[i]->rangingTest(&measure, false);  // pass in 'true' to get debug data printout!
+      for (byte i = 1; i <= NUMBER_OF_SENSORS; i++) 
+      {
+        VL53L0X_RangingMeasurementData_t measure;
+        myMux.setPort(i);
+        distanceSensor[i]->rangingTest(&measure, false);  // pass in 'true' to get debug data printout!
+      
+        if (measure.RangeStatus != 4 && sums[i] != -1)   
+        {  
+          sums[i] += measure.RangeMilliMeter;
+        } else {
+          sums[i] = -1;
+        }
     
-      if (measure.RangeStatus != 4) {  // phase failures have incorrect data
-        distances[i] = measure.RangeMilliMeter;
-      } else {
-        distances[i] = -1;
       }
-  
+      delay(1);
     }
+    for(int i = 1; i <= NUMBER_OF_SENSORS; ++i)
+    {
+      if(sums[i] == -1)
+        distances[i] = -1;
+      else
+        distances[i] = sums[i] / 5;
+    }
+    
   }
   

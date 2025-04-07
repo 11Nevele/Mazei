@@ -16,6 +16,7 @@ class DistanceSensor
   public:
   DistanceSensor();
   void Debug();
+  void UpdateSensor(int);
   //return -1 if invalid or distance to far
   int GetDistance(int i);
   void Update();

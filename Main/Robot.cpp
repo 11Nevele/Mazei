@@ -76,6 +76,7 @@ const double offset = 20;
 void Robot::Move(double distance, double mxSpd)
 {
   int used_sensor = front;
+  distanceSensor.Update();
   double pre_dist = distanceSensor.GetDistance(front);
 
 
@@ -84,7 +85,7 @@ void Robot::Move(double distance, double mxSpd)
   drive.Move(0.2);
   while (moved_dist <= 300 - offset)
   {
-    
+    distanceSensor.Update();
     double new_dist = distanceSensor.GetDistance(used_sensor);
     moved_dist = abs(new_dist - pre_dist);
     CheckVictum();
@@ -114,7 +115,7 @@ void Robot::Start()
   
   while(true)
   {    
-    maze[r][c].visited = true;
+    maze[r][c].SetVisited(true);
     bool wall[3]{}, visited[3]{};
     distanceSensor.Update();
     for(int i = 0; i < 3; ++i)
@@ -123,19 +124,23 @@ void Robot::Start()
         wall[i] = true;
       int ind = ((int)facing - 1 + i + 4) % 4; 
       int nr = r + dir[ind][0], nc = c + dir[ind][1];
-      visited[i] = maze[nr][nc].visited;
+      visited[i] = maze[nr][nc].GetVisited();
       Serial.print(wall[i]);
       Serial.print(visited[i]);
     }
     
     int candidates[3];
+    int candidates2[3];
     int count = 0;
+    int count2 = 0;
 
     // Collect unvisited (and optionally unblocked) indices
     for (int i = 0; i < 3; ++i)
     {
         if (!visited[i] && !wall[i]) // You can remove `!wall[i]` if you don't want to avoid walls
             candidates[count++] = i;
+        if(!wall[i])
+          candidates2[count2++] = i;
     }
 
     int choice;
@@ -143,10 +148,14 @@ void Robot::Start()
     {
         choice = candidates[rand() % count];
     }
-    else
+    else if(count2 > 0)
     {
         // No unvisited options, pick randomly from all 0 to 2
-        choice = rand() % 3;
+        choice = candidates2[rand() % count2];
+    }
+    else
+    {
+      choice = -1;
     }
     choice -= 1;
     facing = (facing + choice + 4) % 4;
