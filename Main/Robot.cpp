@@ -14,13 +14,7 @@ gyro()
 {
   pinMode(ledPort, OUTPUT);
   //servo.attach(servoPort);
-  digitalWrite(ledPort, HIGH);
-    delay(500);
-    digitalWrite(ledPort, LOW);
-  while(true)
-  {
-    CheckVictum();
-  }
+
 }
 
 
