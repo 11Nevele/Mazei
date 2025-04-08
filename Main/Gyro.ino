@@ -51,7 +51,4 @@ void Gyro::Update()
   pitch=((int8_t)Wire.read()); // One byte Pitch in range of (-90 to 90 degrees)
   roll=((int8_t)Wire.read()); // One byte Roll in range of (-90 to 90 degrees)        
   
-  Wire.beginTransmission(CMPS12);  
-  Wire.write(0x1C);                     
-  Wire.endTransmission(false);
 }

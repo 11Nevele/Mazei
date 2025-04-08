@@ -12,10 +12,10 @@ Drivetrain::Drivetrain():AFMS(0x62)
     }
     
     Serial.println("Motor Shield found.");
-    FR.Init(AFMS, 1);
-    BR.Init(AFMS, 2);
-    BL.Init(AFMS, 3);
-    FL.Init(AFMS, 4);
+    FR.Init(AFMS, 3);
+    BR.Init(AFMS, 4);
+    BL.Init(AFMS, 2);
+    FL.Init(AFMS, 1);
 }
   void Drivetrain::Move(double spd)
   {

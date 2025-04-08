@@ -19,7 +19,7 @@ class Robot
   void Start();
   void Turn(double,double);
   void Move(double, double);
-  void MovePID(double, double, double);
+  void MovePID(double, double, double, double);
   bool CheckMovementFinished(double, double, double);
   bool CheckRotationFinished(double , double , double);
   void CheckVictum(int &vic);
@@ -40,11 +40,13 @@ class Robot
   Drivetrain drive;
   Camera leftCamera, rightCamera;
   Gyro gyro;
-  //ColorSensor colorSensor;
+  ColorSensor colorSensor;
   Servo servo;
   DistanceSensor distanceSensor;
   Direction facing;
   Tile maze[60][60]{};
+  int dir[4][2]{{0, -1},{1, 0}, {0, -1}, {-1, 0}};
+  double rotation[4]{270, 0, 90, 180};
   int r =30, c = 30;
 };
 

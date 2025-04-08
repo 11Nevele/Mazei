@@ -9,7 +9,8 @@ class PID
     double cumError;
     double rateError;
     double kp, ki, kd;
-    PID(double, double , double );
+    double kiActiveDis;
+    PID(double, double , double ,double);
     double GetPID(double, bool useKP = false);
     
   

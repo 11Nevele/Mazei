@@ -57,10 +57,10 @@ class ColorSensor
     // else if (Red<Blue && Red<=Green && Red<30)      // if   Red value is the lowest one and smaller thant 23 it's likely Red
     //   curColor = red;
 
-    // else if (Blue<Green && Blue<Red && Blue<50)    //Same thing for Blue
-    //   curColor = blue;
+    else if (Blue<Green && Blue<Red && Blue<30)    //Same thing for Blue
+       curColor = blue;
 
-    else if (Red >=30 && Green >=40 && Blue >=30)        //Green it was a little tricky,   you can do it using the same method as above (the lowest), but here I used a reflective   object
+    else if (Red >=30 && Green >=30 && Blue >=30)        //Green it was a little tricky,   you can do it using the same method as above (the lowest), but here I used a reflective   object
       curColor = black;                  //which means the   blue value is very low too, so I decided to check the difference between green and   blue and see if it's acceptable
 
     else
@@ -78,13 +78,13 @@ class ColorSensor
     digitalWrite(s2, LOW);                                           //S2/S3 levels define which set   of photodiodes we are using LOW/LOW is for RED LOW/HIGH is for Blue and HIGH/HIGH   is for green 
     digitalWrite(s3, LOW);                                           
     Red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);       //here we wait   until "out" go LOW, we start measuring the duration and stops when "out" is   HIGH again, if you have trouble with this expression check the bottom of the code
-    delay(20);  
+ 
     digitalWrite(s3, HIGH);                                         //Here   we select the other color (set of photodiodes) and measure the other colors value   using the same techinque
     Blue = pulseIn(out, digitalRead(out) == HIGH ? LOW   : HIGH);
-    delay(20);  
+  
     digitalWrite(s2, HIGH);  
     Green = pulseIn(out,   digitalRead(out) == HIGH ? LOW : HIGH);
-    delay(20);  
+ 
   }
 
 };

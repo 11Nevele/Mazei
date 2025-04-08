@@ -4,12 +4,12 @@
 #include "Vector.hpp"
 #include "Color.hpp"
 
-Robot::Robot()://leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2), 
-rightCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2),
+Robot::Robot():leftCamera(leftCamera1, leftCamera2, leftCamera3), 
+rightCamera(rightCamerac1, rightCameral1, rightCameral2),
 distanceSensor(),
 drive(),
 gyro(),
-//colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),
+colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),
 servo()
 {
   pinMode(ledPort, OUTPUT);
@@ -33,56 +33,90 @@ void Robot::Flash()
 void Robot::CheckVictum(int &vic)
 {
   int t = rightCamera.GetVictim();
-  distanceSensor.Update();
-  if(t != 0&& !maze[r][c].GetVisited() && distanceSensor.GetDistance(right) < 200 && vic == 0)
+  if(t != 0&& !maze[r][c].GetVisited()  && vic == 0)
     vic = t;
 
   Serial.println(t);
+  t = leftCamera.GetVictim();
+  if(t != 0&& !maze[r][c].GetVisited()  && vic == 0)
+     vic = t;
 
+ Serial.println(t);
+}
 double const MOVEMENT_ERROR = 10;
 
-static bool Robot::CheckMovementFinished(double target, double cur, double rate)
+bool Robot::CheckMovementFinished(double target, double cur, double rate)
 {
     bool ucRange = fabs(target - cur) < MOVEMENT_ERROR;
     //bool rateRange = fabs(rate) < ROTATION_RATE_ERROR;
     return ucRange ;
 }
 
-void Robot::MovePID(double dist, double maxSpeed, double time)
+void Robot::MovePID(double dist, double maxSpeed, double time, double direction)
 {
-    double kp = 0.005, ki = 0.01, kd = 0.0;    
+    double kp = 0.003, ki = 0.003, kd = 0.0;    
     PID pid(kp, ki,kd, 90);
-
+    int vic = 0;
     distanceSensor.Update();
     int used_sensor = front;
     double curDist = 0;
     double baseDist = distanceSensor.GetDistance(used_sensor);
-    if (baseDist == -1){
+    if (baseDist == -1 || (distanceSensor.GetDistance(back) < baseDist && distanceSensor.GetDistance(back) != -1))
+    {
       baseDist = distanceSensor.GetDistance(back);
       used_sensor = back;
       Serial.println("HI");
     }
-
+    
+    Serial.println("Start moving");
     double st = millis();
-    double waitTime = 1200; 
+    double waitTime = 5000; 
 
     delay(10);
     while(!CheckMovementFinished(dist, curDist, pid.rateError))
-    {        
+    {   
         distanceSensor.Update();
+        colorSensor.Update();
         curDist = abs(baseDist - distanceSensor.GetDistance(used_sensor));
         double curError = dist - curDist;
+        if (colorSensor.getColor() == black && direction != -1){
+          drive.Break();
+          Serial.println("Reverse");
+          delay(500);
+          distanceSensor.Update();
+          curDist = abs(baseDist - distanceSensor.GetDistance(used_sensor));
+          MovePID(curDist, 0.3, 0, -1);
+          facing = (facing + 2) % 4;
+          Turn(rotation[facing], 0.5);
+
+          break;
+        }
+
+        if (gyro.GetPitch() > 15){
+          drive.Move(0.4);
+          delay(2000);
+          break;
+        }
+
+        if (gyro.GetPitch() < -10){
+          drive.Move(0.15);
+          delay(4000);
+          break;
+        }
+        
 
         double out = pid.GetPID(curError);
 
         if(out > maxSpeed) out = maxSpeed;
         else if(out < -maxSpeed) out = -maxSpeed;
-        Serial.print(curError);
+        if (out < 0) out *= 0.4;
+        Serial.print(distanceSensor.GetDistance(used_sensor));
         Serial.print("\t");
+        Serial.print("Cur Dist: ");
         Serial.println(curDist);
 
-        drive.Move(out);
-        delay(5);
+        drive.Move(out * direction);
+
     }
     
     drive.Move(0);
@@ -92,7 +126,7 @@ void Robot::MovePID(double dist, double maxSpeed, double time)
 }
 
 
-double const ROTATION_ERROR = 0.5, ROTATION_RATE_ERROR = 0.5; 
+double const ROTATION_ERROR = 2, ROTATION_RATE_ERROR = 10; 
 
 bool Robot::CheckRotationFinished(double target, double cur, double rate)
 {
@@ -101,9 +135,10 @@ bool Robot::CheckRotationFinished(double target, double cur, double rate)
     return ucRange && rateRange ;
 }
 
-void Robot::Turn(double target, double maxSpeed = 0.5){
-  double kp = 0.01, ki = 0.001, kd = 0; 
-  PID pid(kp, ki,kd);
+void Robot::Turn(double target, double maxSpeed = 0.5)
+{
+  double kp = 0.010, ki = 0.0015, kd = 0.0; 
+  PID pid(kp, ki,kd, 10);
    
   double curRotation  = gyro.GetYaw();
   double st = millis();
@@ -112,27 +147,20 @@ void Robot::Turn(double target, double maxSpeed = 0.5){
   int vic = 0;
   while(!CheckRotationFinished(target, curRotation, pid.rateError))
   {        
-      CheckVictum(vic);
       curRotation = gyro.GetYaw();
       double curError = AngleDif(curRotation, target);
       
-      double out = pid.GetPID(curError, st + waitTime < millis());
+      double out = pid.GetPID(curError, false);
 
       if(out > maxSpeed) out = maxSpeed;
       else if(out < -maxSpeed) out = -maxSpeed;
-      //Serial.print("Error: ");
-      //Serial.print(curError);
-      //Serial.print(" OUT: ");
-      //Serial.println(out);
+      Serial.print("Error: ");
+      Serial.print(curError);
+      Serial.print(" curRotation: ");
+      Serial.println(gyro.GetYaw());
     
       drive.Turn(out);
-      delay(10);
   }
-  if(vic != 0)
-  {
-    Flash();
-  }
-
   drive.Turn(0);
   delay(100);  
 }
@@ -144,22 +172,24 @@ void Robot::Start()
 
   facing = front;
   int r = 15, c= 15;
-  int dir[4][2]{{0, -1},{1, 0}, {0, -1}, {-1, 0}};
-  double rotation[4]{270, 0, 90, 180};
   
-  while (true){
-    drive.Move(0.3);
-    if (colorSensor.getColor() == black){
-      drive.Move(-0.3);
-      delay(1000);
-    }
-  }
-
+  Serial.println("Start Robot");
+  distanceSensor.Update();
+  srand(millis());
+  // while(true)
+  // {
+  //   colorSensor.Update();
+  //   colorSensor.Debug();
+  //   delay(200);
+  // }
+  
   while(true)
   {    
+    
     maze[r][c].SetVisited(true);
     bool wall[3]{}, visited[3]{};
     distanceSensor.Update();
+
     for(int i = 0; i < 3; ++i)
     {
       if(distanceSensor.GetDistance(i) <= 200 && distanceSensor.GetDistance(i) != -1)
@@ -201,8 +231,14 @@ void Robot::Start()
     }
     choice -= 1;
     facing = (facing + choice + 4) % 4;
+    colorSensor.Update();
+    if(colorSensor.getColor() == blue)
+    {
+      Flash();
+      delay(5000);
+    }
     Turn(rotation[facing]);
-    Move(300, 1);  
+    MovePID(300, 0.5, 1000, 1);  
     r += dir[facing][0], c += dir[facing][1];
   }
   
