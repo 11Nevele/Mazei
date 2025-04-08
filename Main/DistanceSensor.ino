@@ -3,11 +3,8 @@
   DistanceSensor::DistanceSensor()
   {
     while (!Serial) {
-      
       delay(1);
-      
     }
-    Serial.println("Ada test");
     distanceSensor = new Adafruit_VL53L0X*[NUMBER_OF_SENSORS + 1];
     if (myMux.begin(0x70, Wire) == false) {
       Serial.println("MUX INITILIZATION FAILURE. SETUP HALTED");

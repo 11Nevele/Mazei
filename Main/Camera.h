@@ -4,9 +4,10 @@ class Camera
 {
   public:
   Camera(){};
-  Camera(int, int, int);
-  int GetVictim();
+  Camera(int, int, int, int);
+  int GetColor();
+  int GetLetter();
   private:
-  int p1 = 0, p2 = 0, p3 = 0;
+  int color1, color2, letter1, letter2; 
 };
 #endif
