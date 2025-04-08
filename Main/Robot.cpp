@@ -3,14 +3,13 @@
 #include "Tile.hpp"
 #include "Vector.hpp"
 
-Robot::Robot():leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2), 
-//rightCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2),
-distanceSensor(),
-drive(),
-gyro(),
-//colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),
-servo()
+Robot::Robot():
+//rightCamera(rightCamerac1, rightCameral1, rightCameral2),
 
+//drive(),
+//gyro(),
+//colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),
+distanceSensor()
 {
   pinMode(ledPort, OUTPUT);
   //Servo port = 47
@@ -33,16 +32,14 @@ void Robot::Flash()
   delay(500);
 }
 
-void Robot::CheckVictum(int &c, int &l)
+void Robot::CheckVictum(int &vic)
 {
-  int tc = leftCamera.GetColor();
-  int tl = leftCamera.GetLetter();
-  if(tc != 0&& !maze[r][c].GetVisited() && c == 0)
-    c = tc;
-  if(tl != 0 && !maze[r][c].GetVisited()&& l == 0)
-    l = tl;
-  Serial.println(tc);
-  Serial.println(tl);
+  int t = rightCamera.GetVictim();
+  distanceSensor.Update();
+  if(t != 0&& !maze[r][c].GetVisited() && distanceSensor.GetDistance(right) < 200 && vic == 0)
+    vic = t;
+
+  Serial.println(t);
 }
 
 double const MOVEMENT_ERROR = 10;
@@ -115,11 +112,11 @@ void Robot::Turn(double target, double maxSpeed = 1.0){
   double st = millis();
   double waitTime = 1500;
 
-  int c = 0, l = 0;
+  int vic = 0;
   delay(10);
   while(!CheckRotationFinished(target, curRotation, pid.rateError))
   {        
-      CheckVictum(c, l);
+      CheckVictum(vic);
       curRotation = gyro.GetYaw();
       double curError = AngleDif(curRotation, target);
       
@@ -133,26 +130,11 @@ void Robot::Turn(double target, double maxSpeed = 1.0){
   }
   drive.Turn(0);
   delay(100);  
-  if(l != 0)
+  if(vic != 0)
   {
     Flash();
   }
-  if(c != 0)
-  {
-    Flash();
-  }
-  switch(l)
-  {
-    case 1: Swipe(); Swipe();break;
-    case 2: Swipe();break;
-    default: break;
-  }
-  switch(c)
-  {
-    case 1: Swipe(); Swipe();break;
-    case 2: Swipe();break;
-    default: break;
-  }
+
 
   
 }
@@ -197,7 +179,7 @@ void Robot::Start()
 { 
   facing = front;
   int dir[4][2]{{0, -1},{1, 0}, {0, -1}, {-1, 0}};
-  double rotation[4]{270, 0, 90, 180};
+  double rotation[4]{270, 0, 90, 180};int t=0;
   while(true)
   {    
     maze[r][c].SetVisited(true);

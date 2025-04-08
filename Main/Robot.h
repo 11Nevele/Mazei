@@ -22,7 +22,7 @@ class Robot
   void MovePID(double, double, double);
   bool CheckMovementFinished(double, double, double);
   bool CheckRotationFinished(double , double , double);
-  void CheckVictum(int &c, int &l);
+  void CheckVictum(int &vic);
   void Swipe();
   void Flash();
   double AngleDif(double from, double to)
@@ -44,7 +44,7 @@ class Robot
   Servo servo;
   DistanceSensor distanceSensor;
   Direction facing;
-  Tile maze[60][60]{};
+  Tile maze[30][30]{};
   int r =30, c = 30;
 };
 
