@@ -128,13 +128,15 @@ void Robot::Turn(double target, double maxSpeed = 0.5){
       drive.Turn(out);
       delay(10);
   }
+  if(vic != 0)
+  {
+    Flash();
+  }
 
   drive.Turn(0);
   delay(100);  
 }
 
-const double offset = 20;
-void Robot::Move(double distance, double mxSpd)
 
 void Robot::Start()
 {
