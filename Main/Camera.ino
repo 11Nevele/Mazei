@@ -1,21 +1,22 @@
 #include "Camera.h"
-Camera::Camera(int c1, int c2, int l1, int l2)
+Camera::Camera(int p1, int p2, int p3)
 {
-  color1 = c1, color2 = c2, letter1 = l1, letter2 = l2;
-  pinMode(color1, INPUT);
-  pinMode(color2, INPUT);
-  pinMode(letter1, INPUT);
-  pinMode(letter2, INPUT);
+  this->p1 = p1, this->p2 = p2, this->p3 = p3;
+  pinMode(p1, INPUT);
+  pinMode(p2, INPUT);
+  pinMode(p3, INPUT);
+
 }
 
-int Camera::GetColor()
+int Camera::GetVictim()
 {
-  int t= digitalRead(color1) + digitalRead(color2) * 2;
-  return t;
-}
-
-int Camera::GetLetter()
-{
-  int t= digitalRead(letter1) + digitalRead(letter2) * 2;
+  Serial.print("p1: ");
+  Serial.print(digitalRead(p1));
+  Serial.print(" p2: ");
+  Serial.print(digitalRead(p2));
+  Serial.print(" p3: ");
+  Serial.println(digitalRead(p3));
+  delay(100);
+  int t = digitalRead(p1) + digitalRead(p2) * 2 + digitalRead(p3) * 4;
   return t;
 }

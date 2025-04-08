@@ -19,8 +19,12 @@ class Robot
   void Start();
   void Turn(double,double);
   void Move(double, double);
+  void MovePID(double, double, double);
+  bool CheckMovementFinished(double, double, double);
   bool CheckRotationFinished(double , double , double);
-  void CheckVictum();
+  void CheckVictum(int &vic);
+  void Swipe();
+  void Flash();
   double AngleDif(double from, double to)
   {
     double t = to - from;
@@ -36,11 +40,12 @@ class Robot
   Drivetrain drive;
   Camera leftCamera, rightCamera;
   Gyro gyro;
-  ColorSensor colorSensor;
-  Servo servo;  
+  //ColorSensor colorSensor;
+  Servo servo;
   DistanceSensor distanceSensor;
   Direction facing;
-  Tile maze[30][30]{};
+  Tile maze[60][60]{};
+  int r =30, c = 30;
 };
 
 #endif
