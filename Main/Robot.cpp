@@ -2,13 +2,14 @@
 #include "RobotConfig.h"
 #include "Tile.hpp"
 #include "Vector.hpp"
+#include "Color.hpp"
 
-Robot::Robot():leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2), 
+Robot::Robot()://leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2), 
 //rightCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2),
 distanceSensor(),
 drive(),
-gyro()
-//colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),
+// gyro(),
+colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut)
 //servo(),
 
 {
@@ -40,7 +41,7 @@ void Robot::CheckVictum()
   //}
 }
 
-void Robot::Turn(double target, double maxSpeed = 1.0){
+void Robot::Turn(double target, double maxSpeed = 0.5){
   double kp = 0.01, ki = 0.001, kd = 0; 
   PID pid(kp, ki,kd);
    
@@ -113,6 +114,15 @@ void Robot::Start()
   int dir[4][2]{{0, -1},{1, 0}, {0, -1}, {-1, 0}};
   double rotation[4]{270, 0, 90, 180};
   
+  while (true){
+    drive.Move(0.3);
+    if (colorSensor.getColor() == black){
+      drive.Move(-0.3);
+      delay(1000);
+    }
+  }
+
+  /*
   while(true)
   {    
     maze[r][c].SetVisited(true);
@@ -163,4 +173,5 @@ void Robot::Start()
     Move(300, 1);  
     r += dir[facing][0], c += dir[facing][1];
   }
+  */
 }

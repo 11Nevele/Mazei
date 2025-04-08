@@ -1,5 +1,5 @@
 #include "Drivetrain.h"
-Drivetrain::Drivetrain():AFMS(0x61)
+Drivetrain::Drivetrain():AFMS(0x62)
 {
 
     Serial.println("Adafruit Motorshield v2 - DC Motor test!");

@@ -4,6 +4,7 @@
 Gyro::Gyro()
 {
   yaw = 0, pitch = 0, roll = 0;
+  delay(1000);
   Wire.beginTransmission(CMPS12);  
   Wire.write(0X02);                     
   Wire.endTransmission(false);

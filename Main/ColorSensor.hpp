@@ -21,7 +21,7 @@ class ColorSensor
   }
 
 
-  void getColor()
+  int getColor()
   {
     return curColor;
   }
@@ -54,13 +54,13 @@ class ColorSensor
     if (Red <=30 && Green <=30 && Blue <=30)         //If the values   are low it's likely the white color (all the colors are present)
         curColor = white;                   
         
-    else if (Red<Blue && Red<=Green && Red<30)      // if   Red value is the lowest one and smaller thant 23 it's likely Red
-      curColor = red;
+    // else if (Red<Blue && Red<=Green && Red<30)      // if   Red value is the lowest one and smaller thant 23 it's likely Red
+    //   curColor = red;
 
-    else if (Blue<Green && Blue<Red && Blue<50)    //Same thing for Blue
-      curColor = blue;
+    // else if (Blue<Green && Blue<Red && Blue<50)    //Same thing for Blue
+    //   curColor = blue;
 
-    else if (Red >=60 && Green >=60 && Blue >=60)        //Green it was a little tricky,   you can do it using the same method as above (the lowest), but here I used a reflective   object
+    else if (Red >=30 && Green >=40 && Blue >=30)        //Green it was a little tricky,   you can do it using the same method as above (the lowest), but here I used a reflective   object
       curColor = black;                  //which means the   blue value is very low too, so I decided to check the difference between green and   blue and see if it's acceptable
 
     else

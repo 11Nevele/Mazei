@@ -36,8 +36,8 @@ class Robot
   Drivetrain drive;
   Camera leftCamera, rightCamera;
   Gyro gyro;
-  //ColorSensor colorSensor;
-  //Servo servo;
+  ColorSensor colorSensor;
+  Servo servo;  
   DistanceSensor distanceSensor;
   Direction facing;
   Tile maze[30][30]{};
