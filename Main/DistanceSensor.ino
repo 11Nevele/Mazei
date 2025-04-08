@@ -61,7 +61,7 @@
   void DistanceSensor:: Update()
   {
     int sums[NUMBER_OF_SENSORS + 1]{};
-    for(int i = 0; i < 1; ++i)
+    for(int i = 0; i < 5; ++i)
     {
       for (byte i = 1; i <= NUMBER_OF_SENSORS; i++) 
       {
@@ -77,13 +77,14 @@
         }
     
       }
+      delay(1);
     }
     for(int i = 1; i <= NUMBER_OF_SENSORS; ++i)
     {
       if(sums[i] == -1)
         distances[i] = -1;
       else
-        distances[i] = sums[i] / 1;
+        distances[i] = sums[i] / 5;
     }
     
   }

@@ -1,6 +1,6 @@
 #include "PID.h"
 #include <Arduino.h>
-PID::PID(double nkp,double nki,double nkd, double kiActiveDis)
+PID::PID(double nkp,double nki,double nkd)
 {
     currentTime = millis();
     previousTime = millis();
@@ -11,7 +11,6 @@ PID::PID(double nkp,double nki,double nkd, double kiActiveDis)
     kp = nkp;
     ki = nki;
     kd = nkd;
-    kiActiveDis = kiActiveDis;
 }
 
 double PID:: GetPID(double error, bool useKP)
@@ -19,7 +18,7 @@ double PID:: GetPID(double error, bool useKP)
     currentTime = millis();
     
     rateError = (error - previousError);
-    if(fabs(error) < kiActiveDis || useKP)
+    if(fabs(error) < 10 || useKP)
             cumError += error;
         if ((error>0 && previousError<0)||(error<0 && previousError>0))
             cumError = 0; 
