@@ -7,14 +7,94 @@ Robot::Robot():leftCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2
 //rightCamera(leftCamerac1, leftCamerac2, leftCameral1, leftCameral2),
 distanceSensor(),
 drive(),
-gyro()
+gyro(),
 //colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),
-//servo(),
+servo()
 
 {
   pinMode(ledPort, OUTPUT);
-  //servo.attach(servoPort);
+  //Servo port = 47
+  servo.attach(servoPort);
+  servo.write(50);
+}
 
+void Robot::Swipe()
+{
+  servo.write(110);
+  delay(1000);
+  servo.write(50);
+  delay(1000);
+}
+void Robot::Flash()
+{
+  digitalWrite(ledPort, HIGH);
+  delay(500);
+  digitalWrite(ledPort, LOW);
+  delay(500);
+}
+
+void Robot::CheckVictum(int &c, int &l)
+{
+  int tc = leftCamera.GetColor();
+  int tl = leftCamera.GetLetter();
+  if(tc != 0&& !maze[r][c].GetVisited() && c == 0)
+    c = tc;
+  if(tl != 0 && !maze[r][c].GetVisited()&& l == 0)
+    l = tl;
+  Serial.println(tc);
+  Serial.println(tl);
+}
+
+double const MOVEMENT_ERROR = 10;
+
+static bool Robot::CheckMovementFinished(double target, double cur, double rate)
+{
+    bool ucRange = fabs(target - cur) < MOVEMENT_ERROR;
+    //bool rateRange = fabs(rate) < ROTATION_RATE_ERROR;
+    return ucRange ;
+}
+
+void Robot::MovePID(double dist, double maxSpeed, double time)
+{
+    double kp = 0.005, ki = 0.01, kd = 0.0;    
+    PID pid(kp, ki,kd, 90);
+
+    distanceSensor.Update();
+    int used_sensor = front;
+    double curDist = 0;
+    double baseDist = distanceSensor.GetDistance(used_sensor);
+    if (baseDist == -1){
+      baseDist = distanceSensor.GetDistance(back);
+      used_sensor = back;
+      Serial.println("HI");
+    }
+
+    double st = millis();
+    double waitTime = 1200; 
+
+    delay(10);
+    while(!CheckMovementFinished(dist, curDist, pid.rateError))
+    {        
+        distanceSensor.Update();
+        curDist = abs(baseDist - distanceSensor.GetDistance(used_sensor));
+        double curError = dist - curDist;
+
+        double out = pid.GetPID(curError);
+
+        if(out > maxSpeed) out = maxSpeed;
+        else if(out < -maxSpeed) out = -maxSpeed;
+        Serial.print(curError);
+        Serial.print("\t");
+        Serial.println(curDist);
+
+        drive.Move(out);
+        delay(5);
+    }
+    
+    drive.Move(0);
+    gyro.Update();
+    distanceSensor.Update();
+    delay(100);
 }
 
 
@@ -26,31 +106,20 @@ bool Robot::CheckRotationFinished(double target, double cur, double rate)
     bool rateRange = fabs(rate) < ROTATION_RATE_ERROR;
     return ucRange && rateRange ;
 }
-void Robot::CheckVictum()
-{
-  int c = leftCamera.GetColor();
-  int l = leftCamera.GetLetter();
-  Serial.println(c);
-  Serial.println(l);
-  //if((c > 0 || l > 0) && distanceSensor.GetDistance(left) <= 140)
-  //{
-    //digitalWrite(ledPort, HIGH);
-    //delay(500);
-    //digitalWrite(ledPort, LOW);
-  //}
-}
 
 void Robot::Turn(double target, double maxSpeed = 1.0){
   double kp = 0.01, ki = 0.001, kd = 0; 
-  PID pid(kp, ki,kd);
+  PID pid(kp, ki,kd, 10);
    
   double curRotation  = gyro.GetYaw();
   double st = millis();
   double waitTime = 1500;
+
+  int c = 0, l = 0;
   delay(10);
   while(!CheckRotationFinished(target, curRotation, pid.rateError))
   {        
-      CheckVictum();
+      CheckVictum(c, l);
       curRotation = gyro.GetYaw();
       double curError = AngleDif(curRotation, target);
       
@@ -58,21 +127,40 @@ void Robot::Turn(double target, double maxSpeed = 1.0){
 
       if(out > maxSpeed) out = maxSpeed;
       else if(out < -maxSpeed) out = -maxSpeed;
-      //Serial.print("Error: ");
-      //Serial.print(curError);
-      //Serial.print(" OUT: ");
-      //Serial.println(out);
     
       drive.Turn(out);
-      delay(10);
+      delay(5);
   }
-
   drive.Turn(0);
   delay(100);  
+  if(l != 0)
+  {
+    Flash();
+  }
+  if(c != 0)
+  {
+    Flash();
+  }
+  switch(l)
+  {
+    case 1: Swipe(); Swipe();break;
+    case 2: Swipe();break;
+    default: break;
+  }
+  switch(c)
+  {
+    case 1: Swipe(); Swipe();break;
+    case 2: Swipe();break;
+    default: break;
+  }
+
+  
 }
 
-const double offset = 20;
 
+// const double offset = 20;
+
+/*
 void Robot::Move(double distance, double mxSpd)
 {
   int used_sensor = front;
@@ -103,16 +191,13 @@ void Robot::Move(double distance, double mxSpd)
   distanceSensor.Update();
   distanceSensor.Debug();
 }
+*/
 
 void Robot::Start()
-{
-
-
+{ 
   facing = front;
-  int r = 15, c= 15;
   int dir[4][2]{{0, -1},{1, 0}, {0, -1}, {-1, 0}};
   double rotation[4]{270, 0, 90, 180};
-  
   while(true)
   {    
     maze[r][c].SetVisited(true);
@@ -160,7 +245,9 @@ void Robot::Start()
     choice -= 1;
     facing = (facing + choice + 4) % 4;
     Turn(rotation[facing]);
-    Move(300, 1);  
+    MovePID(300, 0.5, 1000);  
     r += dir[facing][0], c += dir[facing][1];
   }
+
+  
 }
