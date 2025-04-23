@@ -3,14 +3,9 @@
 #include "Tile.hpp"
 #include "Vector.hpp"
 #include "Color.hpp"
+#include "Camera.h"
 
-Robot::Robot():leftCamera(leftCamera1, leftCamera2, leftCamera3), 
-rightCamera(rightCamerac1, rightCameral1, rightCameral2),
-distanceSensor(),
-drive(),
-gyro(),
-colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),
-servo()
+Robot::Robot():distanceSensor(),drive(),gyro(),colorSensor(colorS0, colorS1, colorS2, colorS3, colorOut),servo()
 {
   pinMode(ledPort, OUTPUT);
   servo.attach(servoPort);
@@ -30,18 +25,19 @@ void Robot::Flash()
   delay(500);
 }
 
-void Robot::CheckVictum(int &vic)
+void Robot::CheckVictum(char &vic)
 {
-  int t = rightCamera.GetVictim();
-  if(t != 0&& !maze[r][c].GetVisited()  && vic == 0)
-    vic = t;
+  if(vic != 0)
+    return;
+  if(victimFoundL)
+  { 
+    vic = receiveVictimInfoCamL();
+  }
+  if(victimFoundR)
+  {
+    vic = receiveVictimInfoCamR();
+  }
 
-  Serial.println(t);
-  t = leftCamera.GetVictim();
-  if(t != 0&& !maze[r][c].GetVisited()  && vic == 0)
-     vic = t;
-
- Serial.println(t);
 }
 double const MOVEMENT_ERROR = 10;
 
@@ -56,7 +52,7 @@ void Robot::MovePID(double dist, double maxSpeed, double time, double direction)
 {
     double kp = 0.003, ki = 0.003, kd = 0.0;    
     PID pid(kp, ki,kd, 90);
-    int vic = 0;
+    char vic = 0;
     distanceSensor.Update();
     int used_sensor = front;
     double curDist = 0;
@@ -77,6 +73,7 @@ void Robot::MovePID(double dist, double maxSpeed, double time, double direction)
     {   
         distanceSensor.Update();
         colorSensor.Update();
+        CheckVictum(vic);
         curDist = abs(baseDist - distanceSensor.GetDistance(used_sensor));
         double curError = dist - curDist;
         if (colorSensor.getColor() == black && direction != -1){
@@ -119,6 +116,34 @@ void Robot::MovePID(double dist, double maxSpeed, double time, double direction)
 
     }
     
+    switch(vic)
+    {
+      case 'R':
+        Flash();
+        Swipe();
+        Swipe();
+        break;
+      case 'G':
+        Flash();
+        break;
+      case 'Y':
+        Flash();
+        Swipe();
+        break;
+      case 'H':
+        Flash();
+        Swipe();
+        Swipe();
+        break;
+      case 'S':
+        Flash();
+        break;
+      case 'U':
+        Flash();
+        Swipe();
+        break;  
+    }
+
     drive.Move(0);
     gyro.Update();
     distanceSensor.Update();
@@ -144,10 +169,11 @@ void Robot::Turn(double target, double maxSpeed = 0.5)
   double st = millis();
   double waitTime = 1500;
   delay(10);
-  int vic = 0;
+  char vic = 0;
   while(!CheckRotationFinished(target, curRotation, pid.rateError))
   {        
       curRotation = gyro.GetYaw();
+      CheckVictum(vic);
       double curError = AngleDif(curRotation, target);
       
       double out = pid.GetPID(curError, false);
@@ -161,6 +187,35 @@ void Robot::Turn(double target, double maxSpeed = 0.5)
     
       drive.Turn(out);
   }
+
+  switch(vic)
+  {
+    case 'R':
+      Flash();
+      Swipe();
+      Swipe();
+      break;
+    case 'G':
+      Flash();
+      break;
+    case 'Y':
+      Flash();
+      Swipe();
+      break;
+    case 'H':
+      Flash();
+      Swipe();
+      Swipe();
+      break;
+    case 'S':
+      Flash();
+      break;
+    case 'U':
+      Flash();
+      Swipe();
+      break;  
+  }
+
   drive.Turn(0);
   delay(100);  
 }
@@ -171,11 +226,12 @@ void Robot::Start()
 
 
   facing = front;
-  int r = 15, c= 15;
+  int r = 30, c= 30;
   
   Serial.println("Start Robot");
   distanceSensor.Update();
-  srand(millis());
+
+  srand(colorSensor.Red * colorSensor.Green * colorSensor.Blue);
   // while(true)
   // {
   //   colorSensor.Update();

@@ -68,10 +68,10 @@ class ColorSensor
     
     
   }
-
+  int Red = 0, Blue = 0, Green = 0;
   private:
   Color curColor = white;
-  int Red = 0, Blue = 0, Green = 0;
+  
   uint8_t s0,s1,s2,s3,out;
   void GetColors()  
   {    

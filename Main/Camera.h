@@ -1,13 +1,12 @@
+
 #ifndef CAMERA_H
 #define CAMERA_H
-class Camera
-{
-  public:
-  Camera(){};
-  Camera(int, int, int);
-  int GetVictim();
+static bool victimFoundL = false;
+static bool victimFoundR = false;
 
-  private:
-  int p1 = 0, p2 = 0, p3 = 0;
-};
+void SetVictumFoundL();
+void SetVictumFoundR();
+char receiveVictimInfoCamL();
+
+char receiveVictimInfoCamR();
 #endif

@@ -1,22 +1,49 @@
 #include "Camera.h"
-Camera::Camera(int p1, int p2, int p3)
-{
-  this->p1 = p1, this->p2 = p2, this->p3 = p3;
-  pinMode(p1, INPUT);
-  pinMode(p2, INPUT);
-  pinMode(p3, INPUT);
 
+void SetVictumFoundL()
+{
+  Serial.println("Victim Found");
+  victimFoundL = true;
+}
+void SetVictumFoundR()
+{
+  Serial.println("Victim Found");
+  victimFoundR = true;
+}
+char receiveVictimInfoCamL() {
+  // TODO: is Serial1 connected to CamL? 
+  // receive victim information when a victim is found
+
+  while (Serial1.available() == 0) {} // wait for RT1062's report
+  
+  char*buf = new char[1];
+  size_t t = Serial1.readBytes(buf, 1); 
+  Serial.print("OpenMV: ");
+  
+  Serial.println(buf);
+
+  // Notify the OpenMV camera
+  //Serial1.print("Received");
+  victimFoundL = false; 
+  return buf[0];
 }
 
-int Camera::GetVictim()
-{
-  Serial.print("p1: ");
-  Serial.print(digitalRead(p1));
-  Serial.print(" p2: ");
-  Serial.print(digitalRead(p2));
-  Serial.print(" p3: ");
-  Serial.println(digitalRead(p3));
-  delay(100);
-  int t = digitalRead(p1) + digitalRead(p2) * 2 + digitalRead(p3) * 4;
-  return t;
+char receiveVictimInfoCamR() {
+  // TODO: is Serial1 connected to CamL? 
+  // receive victim information when a victim is found
+
+  while (Serial2.available() == 0) {} // wait for RT1062's report
+  
+  char* buf = new char[1];
+
+  size_t t = Serial2.readBytes(buf, 1); 
+  Serial.print("OpenMV: ");
+  
+  Serial.println(buf);
+
+  // Notify the OpenMV camera
+  //Serial1.print("Received");
+  victimFoundR = false; 
+
+  return buf[0];
 }
