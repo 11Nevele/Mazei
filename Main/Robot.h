@@ -3,6 +3,7 @@
 #include<Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "Drivetrain.h"
+#include "Camera.h"
 #include "Gyro.h"
 #include "ColorSensor.hpp"
 #include "PID.h"
@@ -21,7 +22,7 @@ class Robot
   void MovePID(double, double, double, double);
   bool CheckMovementFinished(double, double, double);
   bool CheckRotationFinished(double , double , double);
-  void CheckVictum(char &vic);
+  void CheckVictum(int &vic);
   void Swipe();
   void Flash();
   double AngleDif(double from, double to)
@@ -37,6 +38,7 @@ class Robot
 
   private:
   Drivetrain drive;
+  Camera leftCamera, rightCamera;
   Gyro gyro;
   ColorSensor colorSensor;
   Servo servo;
