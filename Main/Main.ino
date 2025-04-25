@@ -252,7 +252,7 @@ void loop()
       choice = -1;
     }
 
-    //update current facing, lightly hard to explain in comment, call me if you have to understand this
+    //update current facing, slightly hard to explain in comment, call me if you have to understand this
     choice -= 1;
     facing = (facing + choice + 4) % 4;
 
