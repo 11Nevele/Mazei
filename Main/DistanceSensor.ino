@@ -1,6 +1,4 @@
-#include "DistanceSensor.h"
-
-  DistanceSensor::DistanceSensor()
+  void InitDistanceSensor()
   {
     while (!Serial) {
       delay(1);
@@ -35,7 +33,7 @@
       }
     }
   }
-  void DistanceSensor:: Debug()
+  void DebugDistanceSensor()
   {
     Serial.print("[DEBUG]::");
     for(int i = 1; i <= NUMBER_OF_SENSORS; ++i)
@@ -49,42 +47,22 @@
     }
     Serial.println();
   }
-  //return -1 if invalid or distance to far
-  int DistanceSensor:: GetDistance(int i)
-  {
-    ++i;
-    if(i > NUMBER_OF_SENSORS)
-      return -1;
-    return distances[i];
-  }
 
-  void DistanceSensor:: Update()
+  void UpdateDistanceSensor()
   {
-    int sums[NUMBER_OF_SENSORS + 1]{};
-    for(int i = 0; i < 1; ++i)
-    {
       for (byte i = 1; i <= NUMBER_OF_SENSORS; i++) 
       {
         VL53L0X_RangingMeasurementData_t measure;
         myMux.setPort(i);
         distanceSensor[i]->rangingTest(&measure, false);  // pass in 'true' to get debug data printout!
       
-        if (measure.RangeStatus != 4 && sums[i] != -1)   
+        if (measure.RangeStatus != 4)   
         {  
-          sums[i] += measure.RangeMilliMeter;
+          distances[i] += measure.RangeMilliMeter;
         } else {
-          sums[i] = -1;
+          distances[i] = -1;
         }
     
-      }
-    }
-    for(int i = 1; i <= NUMBER_OF_SENSORS; ++i)
-    {
-      if(sums[i] == -1)
-        distances[i] = -1;
-      else
-        distances[i] = sums[i] / 1;
-    }
-    
+      }   
   }
   

@@ -1,9 +1,8 @@
 
-#include "Gyro.h"
 
-Gyro::Gyro()
+void InitGyro()
 {
-  yaw = 0, pitch = 0, roll = 0;
+  
   delay(1000);
   Wire.beginTransmission(CMPS12);  
   Wire.write(0X02);                     
@@ -19,29 +18,7 @@ Gyro::Gyro()
 
   offset = -yaw;
 }
-
-double Gyro::GetYaw()
-{
-  Update();
-  double tmp  = (yaw + offset + 360);
-  if(tmp >= 360)
-    tmp -= 360;
-  return tmp;
-}
-
-double Gyro::GetPitch()
-{
-  Update();
-  return pitch;
-}
-
-double Gyro::GetRoll()
-{
-  Update();
-  return roll;
-}
-
-void Gyro::Update()
+void Update()
 {
   Wire.beginTransmission(CMPS12);  
   Wire.write(0X02);                     
@@ -52,3 +29,24 @@ void Gyro::Update()
   roll=((int8_t)Wire.read()); // One byte Roll in range of (-90 to 90 degrees)        
   
 }
+double GetYaw()
+{
+  Update();
+  double tmp  = (yaw + offset + 360);
+  if(tmp >= 360)
+    tmp -= 360;
+  return tmp;
+}
+
+double GetPitch()
+{
+  Update();
+  return pitch;
+}
+
+double GetRoll()
+{
+  Update();
+  return roll;
+}
+
